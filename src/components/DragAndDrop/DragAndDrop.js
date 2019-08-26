@@ -1,58 +1,53 @@
-import React, { Component, Fragment } from "react";
-import { render } from "react-dom";
+import React from 'react';
+import {useDropzone} from 'react-dropzone';
+import styled from 'styled-components';
 
-import ReactDropzone from "react-dropzone";
-
-class DragAndDrop extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      files: [],
-    };
+const getColor = (props) => {
+  if (props.isDragAccept) {
+      return '#00e676';
   }
-
-  onPreviewDrop = (files) => {
-    this.setState({
-      files: this.state.files.concat(files),
-     });
+  if (props.isDragReject) {
+      return '#ff1744';
   }
-
-  render() {
-    const previewStyle = {
-      display: 'inline',
-      width: 100,
-      height: 100,
-    };
-
-    return (
-      <div className="app">
-        <ReactDropzone
-          accept="image/*"
-          onDrop={this.onPreviewDrop}
-        >
-          Drop an image, get a preview!
-        </ReactDropzone>
-        {this.state.files.length > 0 &&
-          <Fragment>
-            <h3>Previews</h3>
-            {this.state.files.map((file) => (
-              <img
-                alt="Preview"
-                key={file.preview}
-                src={file.preview}
-                style={previewStyle}
-              />
-            ))}
-          </Fragment>
-        }
-      </div>
-    );
+  if (props.isDragActive) {
+      return '#2196f3';
   }
+  return '#eeeeee';
 }
 
-const container = document.createElement("div");
-document.body.appendChild(container);
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: ${props => getColor(props)};
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border .24s ease-in-out;
+`;
 
+function DragAndDrop(props) {
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragAccept,
+    isDragReject
+  } = useDropzone({accept: 'image/*'});
+  
+  return (
+    <div className="container">
+      <Container {...getRootProps({isDragActive, isDragAccept, isDragReject})}>
+        <input {...getInputProps()} />
+        <p>Drag 'n' drop some files here, or click to select files</p>
+      </Container>
 
+    </div>
+  );
+}
 export default DragAndDrop;
